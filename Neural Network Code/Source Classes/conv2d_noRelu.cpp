@@ -12,13 +12,13 @@ Models Conv2D Layer with ReLU activation
 -------------------------------------
 */
 
-#include "conv2d.h"
+#include "conv2d_noRelu.h"
 
-Conv2dLayer::Conv2dLayer(int in_channels, int out_channels, int k_size) : input_channels(in_channels), output_channels(out_channels), kernel_size(k_size)
+Conv2d_Pure::Conv2d_Pure(int in_channels, int out_channels, int k_size) : input_channels(in_channels), output_channels(out_channels), kernel_size(k_size)
 {
 }
 
-std::vector<std::vector<double>> Conv2dLayer::forward(std::vector<std::vector<double>> &input)
+std::vector<std::vector<double>> Conv2d_Pure::forward(std::vector<std::vector<double>> &input)
 {
     {
         int input_height = input.size();
@@ -45,8 +45,6 @@ std::vector<std::vector<double>> Conv2dLayer::forward(std::vector<std::vector<do
                             }
                         }
                     }
-                    // Apply ReLU activation
-                    output[i][j] += std::max(0.0, sum);
                 }
             }
         }
