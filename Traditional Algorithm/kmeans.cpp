@@ -1,71 +1,31 @@
-#include <iostream>
-#include <vector>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <algorithm>
-#include <cmath>
-#include <random>
-
-// Define a structure to represent a pixel in RGB color space
-struct RGBPixel {
-    unsigned char r, g, b;
-};
-
-// Define a structure to represent a cluster
-struct Cluster {
-    RGBPixel centroid;
-    std::vector<RGBPixel> points;
-};
-
-// Function to load an image from a PPM file
-std::vector<RGBPixel> loadImage(const std::string &filename, int &width, int &height) {
-    std::ifstream file(filename, std::ios::binary);
-    std::string line;
-    std::getline(file, line); // Read the magic number
-    std::getline(file, line); // Read the width and height
-    std::istringstream iss(line);
-    iss >> width >> height;
-    std::getline(file, line); // Read the max value
-    std::vector<RGBPixel> image(width * height);
-    file.read(reinterpret_cast<char*>(image.data()), width * height * 3);
-    return image;
+#include "kmeans.h"
+double distance(const kMeans::RGBPixel &a, const kMeans::RGBPixel &b)
+{
+    return sqrt(pow(a.r - b.r, 2) + pow(a.g - b.g, 2) + pow(a.b - b.b, 2));
 }
 
-// Function to save an image to a PPM file
-void saveImage(const std::string &filename, const std::vector<RGBPixel> &image, int width, int height) {
-    std::ofstream file(filename, std::ios::binary);
-    file << "P6\n" << width << " " << height << "\n255\n";
-    file.write(reinterpret_cast<const char*>(image.data()), width * height * 3);
-}
-
-// Function to calculate the Euclidean distance between two pixels
-double distance(const RGBPixel &a, const RGBPixel &b) {
-    return std::sqrt(std::pow(a.r - b.r, 2) + std::pow(a.g - b.g, 2) + std::pow(a.b - b.b, 2));
-}
-
-// Function to perform KMeans clustering
-void kMeansClustering(std::vector<RGBPixel> &image, int k, int maxIterations) {
+void kMeansClustering(vector<kMeans::RGBPixel> &image, int k, int maxIterations)
+{
     int width, height;
-    std::vector<Cluster> clusters(k);
-    std::vector<size_t> assignments(image.size());
-
-    // Initialize cluster centroids randomly
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(0, image.size() - 1);
-    for (auto &cluster : clusters) {
-        cluster.centroid = image[dis(gen)];
+    vector<kMeans::Cluster> clusters(k);
+    vector<size_t> assignments(image.size());
+    int i = 0;
+    for (auto &cluster : clusters)
+    {
+        cluster.centroid = image[i++];
     }
-
-    for (int iter = 0; iter < maxIterations; ++iter) {
+    for (int iter = 0; iter < maxIterations; ++iter)
+    {
         // Assign pixels to the nearest cluster
-        for (size_t i = 0; i < image.size(); ++i) {
-            double bestDistance = std::numeric_limits<double>::max();
+        for (size_t i = 0; i < image.size(); ++i)
+        {
+            double bestDistance = numeric_limits<double>::max();
             size_t bestCluster = 0;
-            for (size_t j = 0; j < clusters.size(); ++j) {
+            for (size_t j = 0; j < clusters.size(); ++j)
+            {
                 double dist = distance(image[i], clusters[j].centroid);
-                if (dist < bestDistance) {
+                if (dist < bestDistance)
+                {
                     bestDistance = dist;
                     bestCluster = j;
                 }
@@ -75,10 +35,13 @@ void kMeansClustering(std::vector<RGBPixel> &image, int k, int maxIterations) {
         }
 
         // Calculate new centroids
-        for (auto &cluster : clusters) {
-            if (!cluster.points.empty()) {
+        for (auto &cluster : clusters)
+        {
+            if (!cluster.points.empty())
+            {
                 double sumR = 0, sumG = 0, sumB = 0;
-                for (const auto &point : cluster.points) {
+                for (const auto &point : cluster.points)
+                {
                     sumR += point.r;
                     sumG += point.g;
                     sumB += point.b;
@@ -92,18 +55,39 @@ void kMeansClustering(std::vector<RGBPixel> &image, int k, int maxIterations) {
     }
 
     // Assign the centroid's color to each pixel
-    for (size_t i = 0; i < image.size(); ++i) {
+    for (size_t i = 0; i < image.size(); ++i)
+    {
         image[i] = clusters[assignments[i]].centroid;
     }
 }
 
-int main() {
-    int width, height;
-    std::vector<RGBPixel> image = loadImage("path_to_image.ppm", width, height);
+vector<kMeans::RGBPixel> load_image(const vector<vector<vector<int>>> &image, int &width, int &height)
+{
+    int channels = image.size();
+    width = image[0].size();
+    height = image[0][0].size();
+    std::vector<kMeans::RGBPixel> rgb_image(width * height);
 
-    kMeansClustering(image, 3, 100); // Example: 3 clusters, 100 iterations
+    for (int w = 0; w < width; w++)
+    {
+        for (int h = 0; h < height; h++)
+        {
+            int r = image[0][w][h]; // Red channel
+            int g = image[1][w][h]; // Green channel
+            int b = image[2][w][h]; // Blue channel
 
-    saveImage("path_to_output.ppm", image, width, height);
+            // Set the RGB values for the corresponding pixel in rgb_image
+            rgb_image[w * height + h] = {static_cast<unsigned char>(r), static_cast<unsigned char>(g), static_cast<unsigned char>(b)};
+        }
+    }
 
-    return 0;
+    return rgb_image;
+}
+
+void saveImage(const string &filename, const vector<kMeans::RGBPixel> &image, int width, int height)
+{
+    ofstream file(filename, ios::binary);
+    file << "P6\n"
+         << width << " " << height << "\n255\n";
+    file.write(reinterpret_cast<const char *>(image.data()), width * height * 3);
 }
