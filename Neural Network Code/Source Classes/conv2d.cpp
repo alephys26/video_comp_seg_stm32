@@ -1,6 +1,4 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
+#include "conv2d.h"
 class Conv2dLayer {
 private:
     std::vector<std::vector<double>> kernel;
@@ -84,30 +82,30 @@ public:
     }
 };
 
-int main() {
-    int input_channels = 1;
-    int output_channels = 1;
-    int kernel_size = 3;
+// int main() {
+//     int input_channels = 1;
+//     int output_channels = 1;
+//     int kernel_size = 3;
 
-    Conv2dLayer conv_layer(input_channels, output_channels, kernel_size);
+//     Conv2dLayer conv_layer(input_channels, output_channels, kernel_size);
 
-    // Example input image (3x3)
-    std::vector<std::vector<double>> input = {
-        {1, 2, 3},
-        {4, 5, 6},
-        {7, 8, 9}
-    };
+//     // Example input image (3x3)
+//     std::vector<std::vector<double>> input = {
+//         {1, 2, 3},
+//         {4, 5, 6},
+//         {7, 8, 9}
+//     };
 
-    // Perform forward pass
-    std::vector<std::vector<double>> output = conv_layer.forward(input);
+//     // Perform forward pass
+//     std::vector<std::vector<double>> output = conv_layer.forward(input);
 
-    // Print output
-    for (const auto& row : output) {
-        for (double val : row) {
-            std::cout << val << " ";
-        }
-        std::cout << std::endl;
-    }
+//     // Print output
+//     for (const auto& row : output) {
+//         for (double val : row) {
+//             std::cout << val << " ";
+//         }
+//         std::cout << std::endl;
+//     }
 
-    return 0;
-}
+//     return 0;
+// }
