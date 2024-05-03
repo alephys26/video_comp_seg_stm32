@@ -7,8 +7,8 @@ Course Project
 -------------------------------------
 Helper code for Layer behaviour
 -------------------------------------
-Currently useful
-Models Layer
+Currently not useful
+Models MLP Hidden Layer
 -------------------------------------
 */
 #ifndef __HIDDENLAYER

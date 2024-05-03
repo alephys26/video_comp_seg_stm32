@@ -1,3 +1,14 @@
+/*
+-------------------------------------
+Yash Shrivastava, B21CS079
+-------------------------------------
+EEL3090: Embedded Systems
+Course Project
+-------------------------------------
+Currently useful
+Generates a new DataType SingleByteFloat
+-------------------------------------
+*/
 #include <iostream>
 #include <cstdint>
 
